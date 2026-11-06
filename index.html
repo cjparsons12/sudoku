@@ -1461,6 +1461,31 @@
     }
   }
 
+  function renderSelection() {
+    if (!game) return;
+
+    const sel = selected;
+    const selValue = sel !== null ? game.values[sel] : 0;
+    const selRow = sel !== null ? rowsOf[sel] : -1;
+    const selCol = sel !== null ? colsOf[sel] : -1;
+    const selBox = sel !== null ? boxesOf[sel] : -1;
+
+    for (let i = 0; i < 81; i++) {
+      const el = cells[i].el;
+      const isSel = i === sel;
+      const isPeer = !isSel && sel !== null &&
+        (rowsOf[i] === selRow || colsOf[i] === selCol || boxesOf[i] === selBox);
+      const isSame = !isSel && sel !== null && selValue !== 0 && game.values[i] === selValue;
+
+      el.classList.toggle('selected', isSel);
+      el.classList.toggle('peer', isPeer);
+      el.classList.toggle('same', isSame);
+
+      const tabIndex = isSel ? 0 : -1;
+      if (el.tabIndex !== tabIndex) el.tabIndex = tabIndex;
+    }
+  }
+
   function currentEditable() {
     if (!game || game.solved || generating || selected === null) return false;
     return game.puzzle[selected] === 0;
@@ -1536,6 +1561,12 @@
   function refresh() {
     render();
     updateStats();
+    updatePads();
+    updateUndoState();
+  }
+
+  function refreshSelection() {
+    renderSelection();
     updatePads();
     updateUndoState();
   }
@@ -1762,9 +1793,9 @@
      Player actions
   --------------------------------------------------------- */
   function selectCell(index) {
-    if (!game) return;
+    if (!game || index === selected) return;
     selected = index;
-    refresh();
+    refreshSelection();
   }
 
   function ensureEditable() {
@@ -1911,7 +1942,7 @@
     const r = (rowsOf[selected] + dr + 9) % 9;
     const c = (colsOf[selected] + dc + 9) % 9;
     selected = r * 9 + c;
-    refresh();
+    refreshSelection();
     if (cells[selected]) cells[selected].el.focus({ preventScroll: true });
   }
 
