@@ -341,6 +341,13 @@
   .cell:nth-child(9n) { border-right: 0; }
   .cell:nth-child(n + 73) { border-bottom: 0; }
 
+  /* Match the board's inner corner radius so highlights follow the curve
+     instead of being clipped by the board's rounded corners. */
+  .cell:nth-child(1) { border-top-left-radius: 16px; }
+  .cell:nth-child(9) { border-top-right-radius: 16px; }
+  .cell:nth-child(73) { border-bottom-left-radius: 16px; }
+  .cell:nth-child(81) { border-bottom-right-radius: 16px; }
+
   .cell:nth-child(9n + 3),
   .cell:nth-child(9n + 6) { border-right: 2px solid var(--line-strong); }
 
